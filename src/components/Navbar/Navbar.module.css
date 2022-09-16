@@ -11,6 +11,7 @@
    background-color: cadetblue;
    color: white;
    text-decoration: none;
+   font-weight: 700;
 }
 .topMenu a:hover {
    background-color:cornflowerblue;

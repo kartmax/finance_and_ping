@@ -1,6 +1,15 @@
 :root {
    --radius: 10px;
+   --userfont: roboto-st, sans-serif;
 }
+
+@font-face { src: url("./fonts/roboto-regular-webfont.woff2") format("woff2"); font-family: "roboto-st"; font-weight: 400; font-style: normal; }
+@font-face { src: url("./fonts/roboto-bold-webfont.woff2") format("woff2"); font-family: "roboto-st"; font-weight: 700; font-style: normal; }
+
+body {
+   font-family: var(--userfont);
+}
+
 .app-wrap {
    max-width: 1200px;
    margin-left: auto;
@@ -71,6 +80,7 @@ input:focus::placeholder {
 }
 
 .infoText {
+   font-size: .9rem;
    color:brown;
    text-align: center;
    padding-top: 10px;
