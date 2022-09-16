@@ -1,0 +1,21 @@
+.topMenu ul {
+   display: flex;
+}
+.topMenu li {
+   flex: 1;
+}
+.topMenu a {
+   display: block;
+   text-align: center;
+   padding: 10px 15px;
+   background-color: cadetblue;
+   color: white;
+   text-decoration: none;
+}
+.topMenu a:hover {
+   background-color:cornflowerblue;
+}
+
+a[class="active"] {
+   background-color:cornflowerblue;
+}

@@ -1,0 +1,24 @@
+.reports {
+   max-width: 500px;
+   margin-left: auto;
+   margin-right: auto;
+   height: 75vh;
+   overflow-y: auto;
+   margin-top: 20px;
+   padding: 0 15px;
+}
+.report {
+   background-color: #f2f2f2;
+   border-radius: 15px;
+   margin-top: 15px;
+   margin-bottom: 15px;
+}
+.reportHeader {
+   background-color: #d2d6d5;
+   padding: 20px;
+   border-top-left-radius: 15px;
+   border-top-right-radius: 15px;
+}
+.reportBody {
+   padding: 20px;
+}

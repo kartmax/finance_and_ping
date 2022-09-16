@@ -1,38 +1,78 @@
-.App {
-  text-align: center;
+:root {
+   --radius: 10px;
+}
+.app-wrap {
+   max-width: 1200px;
+   margin-left: auto;
+   margin-right: auto;
+   padding: 0 15px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+main {
+   padding: 15px 0;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.wrapBtn {
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: center;
+   gap: 20px;
+}
+.btn {
+   background: gray;
+   border: 1px solid #000;
+   border-radius: var(--radius);
+   padding: 10px 15px;
+   min-width: 200px;
+   color: #fff;
+   cursor: pointer;
+   transition: all .25s ease;
+   margin-top: 10px;
+   margin-bottom: 10px;
+}
+.btn:hover {
+   background: #fff;
+   color: #000;
+}
+.btn:active {
+   background-color: yellow;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.btn.disabled {
+   opacity: .3;
+}
+.btn.disabled:hover {
+   background: gray;
+   color: #fff;
 }
 
-.App-link {
-  color: #61dafb;
+p {
+   padding: 5px 0;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+input {
+   border: 1px solid black;
+   border-radius: var(--radius);
+   background-color: #fff;
+   padding: 10px 15px;
 }
+input:hover {
+   background-color: gray;
+}
+input:hover::placeholder {
+   color: #fff;
+}
+input:focus {
+   background-color: yellow;
+   color: black;
+}
+input:focus::placeholder {
+   color: black
+}
+
+.infoText {
+   color:brown;
+   text-align: center;
+   padding-top: 10px;
+}
+

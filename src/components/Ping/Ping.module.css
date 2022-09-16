@@ -1,0 +1,13 @@
+.pingWrap {
+   max-width: 500px;
+   margin-left: auto;
+   margin-right: auto;
+}
+.pingForm {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+}
+.pingForm input {
+   width: 100%;
+}
