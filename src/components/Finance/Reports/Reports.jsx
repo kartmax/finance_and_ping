@@ -13,7 +13,7 @@ const Report = (props) => {
          </div>
          <div className={s.reportBody}>
             <p>Стандартное отклонение = {report.standart_deviation}</p> 
-            <p>{report.moda !== undefined ? `Мода = ${report.moda.value} (${report.moda.count})` : `Мода не обнаружена`}</p>
+            <p>{report.moda.count !== 0 ? `Мода = ${report.moda.value} (${report.moda.count})` : `Мода не обнаружена`}</p>
             <p>Медиана = {report.mediana}</p>
             <p>Количество утерянных котировок = {report.lost}</p>
             <p>Время потраченное на расчеты (миллисекунд) = {report.interval}</p>

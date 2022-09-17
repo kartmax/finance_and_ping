@@ -93,6 +93,29 @@ class FinanceApiContainer extends React.Component {
          arrDiff.forEach(val => summaPowDiff+=Number(val)); //(4)
          // корректировка сумы квадратов разниц между значениями из придыдущей порции котировок и средним арифметичеким
          // если среднее арифметическое отличается от предыдущего
+         /*
+         Способ корректировки суммы квадратов разниц предыдущей порции
+         Разница между средними арифметическими возводим в квадрат и умножаем на количество котировок предыдущей порции
+         На полученное значение корректируем предыдущее значение суммы квадратов разниц котировок
+         */
+         if(average !== beforeAverage && (beforeAverage !== 0 && beforeAverage !== undefined)) {
+            const diffAverage = average - beforeAverage;
+            const valCorrectOnBeforeSummaArrDiff = Math.pow(diffAverage, 2) * beforeLengthStocks;
+            summaPowDiff = summaPowDiff + beforeSummaArrDiff + valCorrectOnBeforeSummaArrDiff;
+            return summaPowDiff;
+         }
+         summaPowDiff+=beforeSummaArrDiff;
+         return summaPowDiff;
+      }
+      // Old
+      getOldSummaDiffPow = (arr, beforeLengthStocks, beforeSummaStocks, beforeSummaArrDiff, beforeAverage) => {
+         const average = this.getAverage(arr, beforeLengthStocks, beforeSummaStocks);
+         const arrNew = this.getNewSliceArr(arr, beforeLengthStocks);
+         const arrDiff = arrNew.map( item => Math.pow((item.value - average), 2) ); //(2,3)
+         let summaPowDiff = 0;
+         arrDiff.forEach(val => summaPowDiff+=Number(val)); //(4)
+         // корректировка сумы квадратов разниц между значениями из придыдущей порции котировок и средним арифметичеким
+         // если среднее арифметическое отличается от предыдущего
          if(average !== beforeAverage && (beforeAverage !== 0 && beforeAverage !== undefined)) {
             const oldPathStocks = arr.slice(0, beforeLengthStocks);
             const arrDiffOldPathStocks = oldPathStocks.map( item => Math.pow((item.value - average), 2) );
@@ -110,9 +133,77 @@ class FinanceApiContainer extends React.Component {
          let summaDiff = this.getSummaDiffPow(arr, beforeLengthStocks, beforeSummaStocks, beforeSummaArrDiff, beforeAverage);
          return Math.sqrt(summaDiff / (arr.length-1)).toFixed(2); //(5,6)
       }
+      // Old
+      getOldStandartDeviation = (arr, beforeLengthStocks, beforeSummaStocks, beforeSummaArrDiff, beforeAverage) => {
+         let summaDiff = this.getOldSummaDiffPow(arr, beforeLengthStocks, beforeSummaStocks, beforeSummaArrDiff, beforeAverage);
+         return Math.sqrt(summaDiff / (arr.length-1)).toFixed(2); //(5,6)
+      }
 
       // Поиск Моды
-      searchMod = (arrSort) => {
+      searchMod = (arrSliceSort, objBeforeMode) => {
+         let countBeforeMode = 0;
+         let valueBeforeMode = 0;
+         if(objBeforeMode[0] !== undefined) {
+            if(objBeforeMode[0].moda !== undefined) {
+               countBeforeMode = objBeforeMode[0].moda.count;
+               valueBeforeMode = objBeforeMode[0].moda.value;
+            }
+         }
+         if(countBeforeMode !== 0) {
+            // если первый элемент новой порции меньше/равно значению моды из предыдущей порции
+            // то есть вероятность того, что это значение предыдущей моды встречается в новой порции
+            if(arrSliceSort[0] <= objBeforeMode.value) {
+               const IdxBeforeModeInArrSliceSort = arrSliceSort.indexOf(valueBeforeMode);
+               // если вхождение обнаружено
+               if(IdxBeforeModeInArrSliceSort !== -1) {
+                  // если обнаружено только одно вхождение
+                  if(arrSliceSort[IdxBeforeModeInArrSliceSort + 1] !== valueBeforeMode) {
+                     countBeforeMode+=1;
+                  } else {
+                     for(let i = IdxBeforeModeInArrSliceSort; i < arrSliceSort.length-1; i++) {
+                        if(arrSliceSort[i] === arrSliceSort[i+1]) {
+                           countBeforeMode+=1
+                        } else {
+                           countBeforeMode+=1;
+                           break;
+                        }
+                     }
+                  }
+               }
+            }
+         }
+
+         let countMod=1;
+         let valueMod=0;
+         let countModDop=1;
+         arrSliceSort.forEach((item, idx, arr)=>{
+            if(item !== valueBeforeMode) {
+               if(item === arr[idx+1]){
+                  countModDop++;
+               } else {
+                  if(countModDop > countMod){
+                     countMod = countModDop;
+                     valueMod = item;
+                  }
+                  countModDop = 1;
+               }
+            }
+         });
+         
+         if(valueMod > 0) {
+            if(countMod >= countBeforeMode) {
+               return (
+                  {value : valueMod, count : countMod}
+               )
+            } 
+         } 
+         return (
+            {value : valueBeforeMode, count : countBeforeMode}
+         )
+      }
+
+      // Old
+      searchOldMod = (arrSort) => {
          let countMod=1;
          let valueMod=0;
          let countModDop=1;
@@ -164,17 +255,33 @@ class FinanceApiContainer extends React.Component {
             const timeStart = new Date();
             
             const copyStocks = [...this.props.stocks];
-            const valueSortArr = copyStocks.map(item => item.value).sort((a,b)=>a-b);
+            const copySliceStocks = this.getNewSliceArr(copyStocks, this.props.beforeLengthStocks);
+            const valueSortSliceArr = copySliceStocks.map(item => item.value).sort((a,b)=>a-b);
             const idxSortArr = copyStocks.map(item => item.id);
+
+            // const valueSortSliceArr = copyStocks.map(item => item.value).sort((a,b)=>a-b);
+            // const idxSortArr = copyStocks.map(item => item.id);
+
             const standart_deviation = this.getStandartDeviation(copyStocks, 
                                                                   this.props.beforeLengthStocks, 
                                                                   this.props.beforeSummaStocks,
                                                                   this.props.beforeSummaArrDiff,
                                                                   this.props.beforeAverage
                                                                   );
-            const moda =  this.searchMod(valueSortArr);
-            const mediana = this.searchMedian(valueSortArr);
+            const moda =  this.searchMod(valueSortSliceArr, this.props.reports);
+            const mediana = this.searchMedian(valueSortSliceArr);
             const lost = this.searchLost(idxSortArr);
+
+            // Old
+            // console.log(this.getOldStandartDeviation(copyStocks, 
+            //    this.props.beforeLengthStocks, 
+            //    this.props.beforeSummaStocks,
+            //    this.props.beforeSummaArrDiff,
+            //    this.props.beforeAverage
+            //    ))
+            // console.log(this.searchOldMod(copyStocks.map(item => item.value).sort((a,b)=>a-b)));
+            
+            
    
             const timeFinish = new Date();
             const interval = timeFinish.getTime() - timeStart.getTime();
